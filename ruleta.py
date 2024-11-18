@@ -63,6 +63,8 @@ def app_draw():
     text = font.render('Hello World!', True, BLACK)
     screen.blit(text, (50, 50))
 
+
+
     # Actualitzar el dibuix a la finestra
     pygame.display.update()
 
