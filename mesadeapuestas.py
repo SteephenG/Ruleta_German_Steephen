@@ -132,4 +132,5 @@ while running:
     # Actualizar pantalla
     pygame.display.flip()
 
+
 pygame.quit()
