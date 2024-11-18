@@ -90,7 +90,7 @@ def app_draw():
             color = colors[num_index]
 
             # Dibujar el borde blanco del cuadrado
-            pygame.draw.rect(screen, WHITE, (x, y, square_size, square_size), 3)
+            pygame.draw.rect(screen, WHITE, (x, y, square_size, square_size), )
             # Dibujar el interior del cuadrado
             pygame.draw.rect(screen, color, (x + 4, y + 4, square_size - 8, square_size - 8))  # Deja un margen de 4 px para el borde
 
@@ -111,7 +111,6 @@ def app_draw():
 
     # Actualizar el dibujo en la ventana
     pygame.display.update()  
-
 
 if __name__ == "__main__":
     main()
