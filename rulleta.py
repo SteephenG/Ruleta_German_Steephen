@@ -17,6 +17,12 @@ GREEN = (0, 255, 0)
 WHITE = (255, 255, 255)
 GOLD = (212, 175, 55)
 YELLOW = (255, 255, 0)
+DARK_YELLOW = (139, 128, 0)
+BROWN_LIGHT = (160, 82, 45)  # Marrón claro
+BROWN_DARK = (101, 67, 33)   # Marrón oscuro
+GRAY = (169, 169, 169)       # Gris
+DARK_GRAY = (51, 51, 51)
+GRIS_OSCURO = (34, 34, 34)
 BUTTON_COLOR = (0, 102, 204)
 BUTTON_HOVER_COLOR = (0, 153, 255)
 
@@ -44,13 +50,26 @@ spinning = False
 # Fuente para texto
 font = pygame.font.SysFont(None, 35)
 
-# Función para dibujar la ruleta
+# Función para dibujar la ruleta con sombra y efectos
 def draw_roulette():
     global current_angle
+
+    # Dibujar círculo marrón claro en el centro
+    pygame.draw.circle(screen, BROWN_LIGHT, center, 225)
+
+    # Sombra exterior (base de madera)
+    pygame.draw.circle(screen, BROWN_LIGHT, center, outer_radius + 30)  # Base marrón claro
+    pygame.draw.circle(screen, BROWN_DARK, center, outer_radius + 15)   # Sombra interior de base
 
     # Fondo principal de la ruleta
     pygame.draw.circle(screen, GOLD, center, outer_radius)  # Borde dorado
     pygame.draw.circle(screen, BLACK, center, outer_radius - 10)  # Fondo negro
+
+    # Dibujar el contorno negro del círculo exterior
+    pygame.draw.circle(screen, BLACK, center, outer_radius + 30, 4)  # Contorno negro
+
+    # Dibujar el contorno negro del círculo interior
+    pygame.draw.circle(screen, BLACK, center, outer_radius + 15, 4)  # Contorno negro
 
     # Dibujar los segmentos triangulares
     angle_step = 360 / len(numbers)  # Dividir en 37 partes iguales
@@ -80,17 +99,46 @@ def draw_roulette():
         text = font.render(str(number), True, WHITE)
         screen.blit(text, text.get_rect(center=(text_x, text_y)))
 
-    # Dibujar círculo blanco adicional
-    pygame.draw.circle(screen, WHITE, center, middle_radius)
+    # circulo marron
+    pygame.draw.circle(screen, BROWN_LIGHT, center, 200)  
+    pygame.draw.circle(screen, BROWN_DARK, center, 180)  
 
-    # Dibujar borde negro para el círculo adicional
-    pygame.draw.circle(screen, BLACK, center, middle_radius, 2)
+    # borde negro principal
+    pygame.draw.circle(screen, BLACK, center, 200, 4)  # Línea exterior marrón más gruesa
 
-    # Dibujar círculo central blanco
-    pygame.draw.circle(screen, WHITE, center, center_radius)
+    # circulo gris
+    pygame.draw.circle(screen, GRAY, center, 137)
 
-    # Dibujar borde negro para el círculo central
-    pygame.draw.circle(screen, BLACK, center, center_radius, 2)
+    # sombras grises
+    pygame.draw.circle(screen, (169, 169, 169, 100), center, 137 + 5)  # Sombra ligera en gris
+    pygame.draw.circle(screen, (51, 51, 51, 100), center, 130 + 5)  # Sombra ligera en gris
+    pygame.draw.circle(screen, (34, 34, 34, 100), center, 117 + 5)
+
+
+    # bolita amarilla y gris
+    pygame.draw.circle(screen, GRAY, center, 120)
+    pygame.draw.circle(screen, DARK_YELLOW, center, 15)
+    pygame.draw.circle(screen, YELLOW, center, 10)
+
+
+
+    # lineas pa hacer bonito
+    pygame.draw.circle(screen, BLACK, center, 225, 3)  # Círculo negro sin relleno
+    pygame.draw.circle(screen, BLACK, center, 215, 3)
+    pygame.draw.circle(screen, BLACK, center, 255, 3)
+    pygame.draw.circle(screen, BLACK, center, 20, 1)
+    pygame.draw.circle(screen, BLACK, center, 137, 3)
+    pygame.draw.circle(screen, DARK_GRAY, center, 115, 30)
+    pygame.draw.circle(screen, BLACK, center, 145, 3)
+    pygame.draw.circle(screen, BLACK, center, 86, 4)
+    pygame.draw.circle(screen, BLACK, center, 150, 3)
+    pygame.draw.circle(screen, BLACK, center, 115, 3)
+    pygame.draw.circle(screen, BLACK, center, 120, 3)
+    pygame.draw.circle(screen, BLACK, center, 18, 3)
+    pygame.draw.circle(screen, BLACK, center, 350, 4)
+    pygame.draw.circle(screen, BLACK, center, 352, 3)
+    pygame.draw.circle(screen, BLACK, center, 181, 2)
+
 
 # Dibujar flecha fija hacia abajo, tocando la ruleta
 def draw_arrow():
@@ -104,9 +152,6 @@ def draw_arrow():
         (center[0] - 20, center[1] - outer_radius - 40),  # Punta de la flecha (apunta hacia abajo)
         (center[0] + 20, center[1] - outer_radius - 40)   # Derecha
     ], width=2)
-
-
-
 
 # Dibujar botón
 def draw_button(x, y, w, h, text, hover):
