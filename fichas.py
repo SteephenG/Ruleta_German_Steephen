@@ -25,10 +25,11 @@ pygame.display.set_caption('Window Title')
 
 # Bucle de l'aplicació
 def main():
+    global image
     is_looping = True
 
  # Carregar la imatge
-    folder = os.path.join(os.path.dirname(__file__), "/Imagenes/fichas/ficha_naranja_10.png")
+    folder = os.path.join(os.path.dirname(__file__), "")
     image = pygame.image.load(folder).convert_alpha()
     image = utils.scale_image(pygame, image, target_width=100)
 
@@ -61,7 +62,8 @@ def app_draw():
     screen.fill(WHITE)
 
     # Escriure un text de prova
-   
+    # Imatge
+    screen.blit(image, (400, 50))
 
     # Actualitzar el dibuix a la finestra
     pygame.display.update()
