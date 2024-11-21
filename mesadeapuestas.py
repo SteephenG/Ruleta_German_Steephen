@@ -120,8 +120,7 @@ while running:
 
     # Fondo
     screen.fill(GREENB)
-    utils.draw_grid(pygame, screen, 50)
-
+    
     # Dibujar elementos
     draw_betting_table()
     draw_special_rectangle()
