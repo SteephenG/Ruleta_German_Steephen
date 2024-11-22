@@ -86,7 +86,7 @@ def draw_roulette():
         y2 = center[1] + outer_radius * math.sin(end_angle)
 
         # Dibujar contorno blanco del segmento
-        pygame.draw.polygon(screen, WHITE, [center, (x1, y1), (x2, y2)], width=2)
+        pygame.draw.polygon(screen, WHITE, [center, (x1, y1), (x2, y2)], width=5)
 
         # Dibujar segmento triangular de color
         color = colors[i]
@@ -123,9 +123,9 @@ def draw_roulette():
 
 
     # lineas pa hacer bonito
-    pygame.draw.circle(screen, BLACK, center, 225, 3)  # Círculo negro sin relleno
+    pygame.draw.circle(screen, WHITE, center, 225, 3)  # Círculo negro sin relleno
     pygame.draw.circle(screen, BLACK, center, 215, 3)
-    pygame.draw.circle(screen, BLACK, center, 255, 3)
+    pygame.draw.circle(screen, WHITE, center, 255, 3)
     pygame.draw.circle(screen, BLACK, center, 20, 1)
     pygame.draw.circle(screen, BLACK, center, 137, 3)
     pygame.draw.circle(screen, DARK_GRAY, center, 115, 30)
@@ -138,7 +138,6 @@ def draw_roulette():
     pygame.draw.circle(screen, BLACK, center, 350, 4)
     pygame.draw.circle(screen, BLACK, center, 352, 3)
     pygame.draw.circle(screen, BLACK, center, 181, 2)
-
 
 # Dibujar flecha fija hacia abajo, tocando la ruleta
 def draw_arrow():
@@ -160,54 +159,37 @@ def draw_button(x, y, w, h, text, hover):
     text_surface = font.render(text, True, WHITE)
     screen.blit(text_surface, text_surface.get_rect(center=(x + w // 2, y + h // 2)))
 
-# Lógica para hacer girar la ruleta
-def spin_roulette():
-    global target_angle, speed, spinning
+# Función principal para el bucle de la ruleta
+def roulette():
+    global current_angle, target_angle, speed, spinning
 
-    # Elegir un giro aleatorio
-    steps = random.randint(3, 5) * 360  # Giros completos
-    offset = random.randint(0, 360)     # Desplazamiento final
-    target_angle = current_angle + steps + offset
-    speed = 20  # Velocidad inicial alta
-    spinning = True
+    running = True
+    while running:
+        screen.fill(BLACK)
+        draw_roulette()
+        draw_arrow()
 
-# Bucle principal
-running = True
-button_rect = pygame.Rect(300, 700, 200, 50)  # Posición y tamaño del botón
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if not spinning:  # Comienza la ruleta si no está girando
+                    spinning = True
+                    speed = random.randint(15, 25)
+                    target_angle = random.randint(3600, 7200)  # Un rango mayor de vueltas
 
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            if button_rect.collidepoint(event.pos) and not spinning:
-                spin_roulette()
-
-    # Fondo de pantalla
-    screen.fill(WHITE)
-
-    # Dibujar ruleta
-    draw_roulette()
-
-    # Dibujar flecha fija
-    draw_arrow()
-
-    # Dibujar botón
-    mouse_pos = pygame.mouse.get_pos()
-    draw_button(button_rect.x, button_rect.y, button_rect.width, button_rect.height, "GIRAR", button_rect.collidepoint(mouse_pos))
-
-    # Girar la ruleta con desaceleración
-    if spinning:
-        if current_angle < target_angle:
+        if spinning:
             current_angle += speed
-            speed *= 0.98  # Reducir velocidad gradualmente
-            if speed < 0.35:  # Límite mínimo de velocidad
-                speed = 0.35
-        else:
-            spinning = False  # Detener el giro
-            current_angle %= 360  # Ajustar el ángulo actual
+            if current_angle >= target_angle:
+                spinning = False
+                current_angle = target_angle
+            else:
+                speed *= 0.99  # Desaceleración más gradual
 
-    # Actualizar pantalla
-    pygame.display.flip()
+        pygame.display.update()
+        pygame.time.Clock().tick(60)  # FPS (Frames por segundo)
 
-pygame.quit()
+    pygame.quit()
+
+# Ejecutar la ruleta
+roulette()
