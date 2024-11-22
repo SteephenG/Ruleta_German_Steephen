@@ -1,72 +1,95 @@
-#!/usr/bin/env python3
-
-import math
-import os
-os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame
-import sys
-import utils
+import random
 
-# Definir colors
+# Inicialización de Pygame
+pygame.init()
+
+# Configuración de la pantalla
+width, height = 800, 600
+screen = pygame.display.set_mode((width, height))
+pygame.display.set_caption("Casino Online: Arrastrar Fichas")
+
+# Colores
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
-RED = (255, 0, 0)
-GREEN = (0, 255, 0)
-BLUE  = (0, 0, 255)
-PURPLE = (128, 0, 128)
-ORANGE = (255, 165, 0) 
 
-pygame.init()
-clock = pygame.time.Clock()
+# Cargar la imagen de la ficha (suponiendo que tienes una imagen de ficha llamada "chip.png")
+chip_image = pygame.image.load('Imagenes/ficha_azul_100')  # Asegúrate de tener la imagen 'chip.png'
 
-# Definir la finestra
-screen = pygame.display.set_mode((640, 480))
-pygame.display.set_caption('Window Title')
+# Redimensionar la imagen para que sea más pequeña (ajustando el tamaño a la mitad, por ejemplo)
+chip_width, chip_height = chip_image.get_size()
+new_width = chip_width // 2  # Reducir al 50% del tamaño original
+new_height = chip_height // 2  # Reducir al 50% del tamaño original
+chip_image = pygame.transform.scale(chip_image, (new_width, new_height))  # Redimensionar la imagen
 
-# Bucle de l'aplicació
-def main():
-    global image
-    is_looping = True
+chip_rect = chip_image.get_rect()
 
- # Carregar la imatge
-    folder = os.path.join(os.path.dirname(__file__), "")
-    image = pygame.image.load(folder).convert_alpha()
-    image = utils.scale_image(pygame, image, target_width=100)
+# Lista de fichas apiladas
+chips = []
 
-    while is_looping:
-        is_looping = app_events()
-        app_run()
-        app_draw()
+# Variables para arrastrar fichas
+dragging_chip = None
+drag_offset = (0, 0)
 
-        clock.tick(60) # Limitar a 60 FPS
+# Función para crear fichas apiladas
+def create_stacked_chips(x, y, count):
+    """Genera varias fichas apiladas una encima de la otra."""
+    chips.clear()  # Limpiar cualquier ficha anterior
+    for i in range(count):
+        chip = {
+            'image': chip_image,
+            'rect': chip_image.get_rect(topleft=(x, y + i * 40))  # Desplazamiento de 10px por ficha
+        }
+        chips.append(chip)
 
-    # Fora del bucle, tancar l'aplicació
-    pygame.quit()
-    sys.exit()
+# Función para arrastrar las fichas
+def drag_chip():
+    global dragging_chip, drag_offset
+    mouse_x, mouse_y = pygame.mouse.get_pos()
 
-# Gestionar events
-def app_events():
+    if dragging_chip:
+        # Mover la ficha arrastrada
+        dragging_chip['rect'].topleft = (mouse_x - drag_offset[0], mouse_y - drag_offset[1])
+
+def handle_events():
+    global dragging_chip, drag_offset
+
     for event in pygame.event.get():
-        if event.type == pygame.QUIT: # Botó tancar finestra
+        if event.type == pygame.QUIT:
             return False
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            for chip in chips:
+                if chip['rect'].collidepoint(event.pos):
+                    # Iniciar arrastre de la ficha
+                    dragging_chip = chip
+                    drag_offset = (event.pos[0] - chip['rect'].x, event.pos[1] - chip['rect'].y)
+                    break
+        elif event.type == pygame.MOUSEBUTTONUP:
+            # Detener el arrastre
+            dragging_chip = None
+
     return True
 
-# Fer càlculs
-def app_run():
-    pass
+# Bucle principal
+running = True
 
-# Dibuixar
-def app_draw():
-    
-    # Pintar el fons de blanc
+# Crear las fichas amontonadas
+create_stacked_chips(300, 300, 5)  # Crear 5 fichas apiladas en la posición (300, 300)
+
+while running:
+    running = handle_events()
+
+    # Fondo de pantalla
     screen.fill(WHITE)
 
-    # Escriure un text de prova
-    # Imatge
-    screen.blit(image, (400, 50))
+    # Dibujar fichas apiladas
+    for chip in chips:
+        screen.blit(chip['image'], chip['rect'])
 
-    # Actualitzar el dibuix a la finestra
-    pygame.display.update()
+    # Arrastrar la ficha seleccionada
+    drag_chip()
 
-if __name__ == "__main__":
-    main()
+    # Actualizar pantalla
+    pygame.display.flip()
+
+pygame.quit()
