@@ -90,34 +90,6 @@ def draw_roulette():
     pygame.draw.circle(screen, DARK_YELLOW, center, 15)
     pygame.draw.circle(screen, YELLOW, center, 10)
 
-    pygame.draw.circle(screen, BROWN_LIGHT, center, 200)
-    pygame.draw.circle(screen, BROWN_DARK, center, 180)
-    pygame.draw.circle(screen, GRAY, center, 137)
-    pygame.draw.circle(screen, GRAY, center, 120)
-    pygame.draw.circle(screen, DARK_YELLOW, center, 15)
-    pygame.draw.circle(screen, YELLOW, center, 10)
-
-        # circulo marron
-    pygame.draw.circle(screen, BROWN_LIGHT, center, 200)  
-    pygame.draw.circle(screen, BROWN_DARK, center, 180)  
-
-    # borde negro principal
-    pygame.draw.circle(screen, BLACK, center, 200, 4)  # Línea exterior marrón más gruesa
-
-    # circulo gris
-    pygame.draw.circle(screen, GRAY, center, 137)
-
-    # sombras grises
-    pygame.draw.circle(screen, (169, 169, 169, 100), center, 137 + 5)  # Sombra ligera en gris
-    pygame.draw.circle(screen, (51, 51, 51, 100), center, 130 + 5)  # Sombra ligera en gris
-    pygame.draw.circle(screen, (34, 34, 34, 100), center, 117 + 5)
-
-
-    # bolita amarilla y gris
-    pygame.draw.circle(screen, GRAY, center, 120)
-    pygame.draw.circle(screen, DARK_YELLOW, center, 15)
-    pygame.draw.circle(screen, YELLOW, center, 10)
-
     # lineas pa hacer bonito
     pygame.draw.circle(screen, WHITE, center, 225, 3)  # Círculo negro sin relleno
     pygame.draw.circle(screen, BLACK, center, 215, 3)
@@ -134,7 +106,6 @@ def draw_roulette():
     pygame.draw.circle(screen, BLACK, center, 350, 4)
     pygame.draw.circle(screen, BLACK, center, 352, 3)
     pygame.draw.circle(screen, BLACK, center, 181, 2)
-
 
 # Función para dibujar la flecha
 def draw_arrow():
@@ -167,10 +138,13 @@ def draw_betting_table():
             text_surface = font.render(str(num), True, WHITE)
             screen.blit(text_surface, text_surface.get_rect(center=(x + cell_width // 2, y + cell_height // 2)))
 
-        # Dibujar "2-1" al lado de cada fila
-        pygame.draw.rect(screen, BLACK, (offset_x + len(row) * cell_width, offset_y + i * cell_height, cell_width, cell_height))
+        # Dibujar "2-1" al lado de cada fila con fondo verde
+        x_2to1 = offset_x + len(row) * cell_width
+        y_2to1 = offset_y + i * cell_height
+        pygame.draw.rect(screen, GREENF, (x_2to1, y_2to1, cell_width, cell_height))
+        pygame.draw.rect(screen, WHITE, (x_2to1, y_2to1, cell_width, cell_height), 2)
         text_surface = font.render("2-1", True, WHITE)
-        screen.blit(text_surface, text_surface.get_rect(center=(offset_x + len(row) * cell_width + cell_width // 2, offset_y + i * cell_height + cell_height // 2)))
+        screen.blit(text_surface, text_surface.get_rect(center=(x_2to1 + cell_width // 2, y_2to1 + cell_height // 2)))
 
     # Dibujar las casillas de docenas
     for i, label in enumerate(["1st 12", "2nd 12", "3rd 12"]):
@@ -183,11 +157,12 @@ def draw_betting_table():
 
     # Dibujar las casillas adicionales
     extra_labels = ["1 to 18", "PAR", "ROJAS", "NEGRAS", "IMPAR", "19 to 36"]
+    extra_colors = [GREENF, DARK_BLACK, RED, BLACK, DARK_BLACK, GREENF]
     extra_width = 2 * cell_width
-    for i, label in enumerate(extra_labels):
+    for i, (label, color) in enumerate(zip(extra_labels, extra_colors)):
         x = offset_x + i * extra_width
         y = offset_y + 4 * cell_height
-        pygame.draw.rect(screen, GREENF if i in [0, 5] else DARK_BLACK, (x, y, extra_width, cell_height))
+        pygame.draw.rect(screen, color, (x, y, extra_width, cell_height))
         pygame.draw.rect(screen, WHITE, (x, y, extra_width, cell_height), 2)
         text_surface = font.render(label, True, WHITE)
         screen.blit(text_surface, text_surface.get_rect(center=(x + extra_width // 2, y + cell_height // 2)))
