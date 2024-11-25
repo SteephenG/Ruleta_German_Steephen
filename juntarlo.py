@@ -124,7 +124,7 @@ def draw_arrow():
 def draw_betting_table():
     cell_width = 65
     cell_height = 80
-    offset_x = 850
+    offset_x = 950
     offset_y = 200
 
     # Dibujar las casillas numéricas
@@ -145,6 +145,17 @@ def draw_betting_table():
         pygame.draw.rect(screen, WHITE, (x_2to1, y_2to1, cell_width, cell_height), 2)
         text_surface = font.render("2-1", True, WHITE)
         screen.blit(text_surface, text_surface.get_rect(center=(x_2to1 + cell_width // 2, y_2to1 + cell_height // 2)))
+
+            # Dibujar el "0"
+    zero_x, zero_y, zero_width, zero_height = 850, 200, 100, 240
+    pygame.draw.rect(screen, GREENF, (zero_x, zero_y, zero_width, zero_height))
+    pygame.draw.rect(screen, WHITE, (zero_x, zero_y, zero_width, zero_height), 4)
+
+    text_zero = font.render("0", True, WHITE)
+    rotated_zero = pygame.transform.rotate(text_zero, 90)
+    rotated_zero_rect = rotated_zero.get_rect(center=(zero_x + zero_width // 2, zero_y + zero_height // 2))
+    screen.blit(rotated_zero, rotated_zero_rect)
+
 
     # Dibujar las casillas de docenas
     for i, label in enumerate(["1st 12", "2nd 12", "3rd 12"]):
