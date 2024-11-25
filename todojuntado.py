@@ -264,6 +264,61 @@ def calcular_dinero(jugador):
 
 dinero_jugadores = {jugador: calcular_dinero(jugador) for jugador in JUGADORES}
 
+fichas_en_numeros = {}
+
+def manejar_arrastre(fichas):
+    global ficha_arrastrada, posicion_inicial_ficha
+
+    mouse_x, mouse_y = pygame.mouse.get_pos()
+    mouse_presionado = pygame.mouse.get_pressed()[0]
+
+    if ficha_arrastrada:
+        # Dibujar la ficha mientras se arrastra
+        pantalla.blit(ficha_arrastrada.imagen, (mouse_x - ficha_arrastrada.imagen.get_width() // 2,
+                                                mouse_y - ficha_arrastrada.imagen.get_height() // 2))
+
+    if not ficha_arrastrada:
+        for ficha in fichas:
+            if ficha.rect.collidepoint(mouse_x, mouse_y):
+                indice = VALORES_FICHAS.index(ficha.valor)
+                if JUGADORES[ficha.jugador_nombre]['fichas'][indice] > 0 and mouse_presionado:
+                    ficha_arrastrada = ficha
+                    posicion_inicial_ficha = ficha.rect.topleft
+
+    if not mouse_presionado and ficha_arrastrada:
+        indice = VALORES_FICHAS.index(ficha_arrastrada.valor)
+        # Detectar si la ficha se soltó sobre la mesa de apuestas
+        numero_apuesta = detectar_celda(mouse_x, mouse_y)
+        if numero_apuesta is not None:
+            # Actualizar el diccionario con la ficha y el número
+            fichas_en_numeros[numero_apuesta] = (ficha_arrastrada.jugador_nombre, ficha_arrastrada.valor)
+            print(f"Ficha {ficha_arrastrada.jugador_nombre} de {ficha_arrastrada.valor} a {numero_apuesta}")
+
+        # Restar una ficha al jugador
+        JUGADORES[ficha_arrastrada.jugador_nombre]['fichas'][indice] -= 1
+        ficha_arrastrada = None
+
+# Función para detectar en qué celda se soltó la ficha
+def detectar_celda(x, y):
+    cell_width = 65
+    cell_height = 80
+    offset_x = 950
+    offset_y = 200
+
+    # Verificar las celdas de números
+    for i, row in enumerate(bet_numbers):
+        for j, num in enumerate(row):
+            celda_x = offset_x + j * cell_width
+            celda_y = offset_y + i * cell_height
+            if celda_x <= x <= celda_x + cell_width and celda_y <= y <= celda_y + cell_height:
+                return num
+
+    # Verificar el "0"
+    zero_x, zero_y, zero_width, zero_height = 850, 200, 100, 240
+    if zero_x <= x <= zero_x + zero_width and zero_y <= y <= zero_y + zero_height:
+        return 0
+
+    return None
 
 # Clase para las fichas
 class Ficha:

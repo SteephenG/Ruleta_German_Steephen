@@ -127,15 +127,23 @@ def draw_button(x, y, w, h, text, hover=False):
     text_surface = font.render(text, True, WHITE)
     screen.blit(text_surface, (x + (w - text_surface.get_width()) // 2, y + (h - text_surface.get_height()) // 2))
 
-# Función para obtener el número final en base al ángulo
 def get_number_from_angle(angle):
-    # Número de grados por cada segmento (segmentos = 37)
+    # Número de grados por cada segmento
     segment_angle = 360 / len(numbers)
-    
-    # Calculamos el índice basándonos en la posición del ángulo
-    angle_normalized = (angle + 360) % 360  # Aseguramos que el ángulo esté entre 0 y 360
-    index = int((angle_normalized) // segment_angle)  # Dividimos por el tamaño del segmento para obtener el índice
+
+    # Ajustar el ángulo para que 270 grados sea el inicio
+    adjusted_angle = (angle - 270) % 360
+
+    # Calcular el índice basado en el ángulo ajustado
+    index = int(adjusted_angle // segment_angle)
+
+    # Ajustar para evitar problemas en el límite superior (exactamente 360)
+    if index >= len(numbers):
+        index = 0
+
     return numbers[index]
+
+
 
 # Control del juego
 def main():
