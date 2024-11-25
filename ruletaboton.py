@@ -127,20 +127,14 @@ def draw_button(x, y, w, h, text, hover=False):
     text_surface = font.render(text, True, WHITE)
     screen.blit(text_surface, (x + (w - text_surface.get_width()) // 2, y + (h - text_surface.get_height()) // 2))
 
-
+# Función para obtener el número final en base al ángulo
 def get_number_from_angle(angle):
     # Número de grados por cada segmento (segmentos = 37)
     segment_angle = 360 / len(numbers)
     
-    # Aseguramos que el ángulo esté entre 0 y 360
-    angle_normalized = (angle + 360) % 360  # Normalizamos el ángulo
-    
-    # Debido a la forma en que los números están distribuidos en la ruleta,
-    # cuando la ruleta se detiene, el número que será mostrado es el que está
-    # directamente apuntado por la flecha.
-    # Calcular el índice basándonos en la posición del ángulo
-    index = int((angle_normalized + segment_angle / 2) // segment_angle)  # Ajustamos el cálculo aquí
-
+    # Calculamos el índice basándonos en la posición del ángulo
+    angle_normalized = (angle + 360) % 360  # Aseguramos que el ángulo esté entre 0 y 360
+    index = int((angle_normalized) // segment_angle)  # Dividimos por el tamaño del segmento para obtener el índice
     return numbers[index]
 
 # Control del juego
@@ -161,28 +155,27 @@ def main():
         # Botón para girar la ruleta
         mouse_x, mouse_y = pygame.mouse.get_pos()
         button_rect = pygame.Rect(width // 2 - 100, height - 150, 200, 50)
-        draw_button(width // 2 - 100, height - 150, 200, 10, "Girar Ruleta", button_rect.collidepoint(mouse_x, mouse_y))
+        draw_button(width // 2 - 100, height - 150, 200, 50, "Girar Ruleta", button_rect.collidepoint(mouse_x, mouse_y))
 
         if pygame.mouse.get_pressed()[0] and button_rect.collidepoint(mouse_x, mouse_y) and not spinning:
             spinning = True
             target_angle = random.randint(500, 1000)  # Ángulo de destino aleatorio
-            speed = random.randint(10, 20)
+            speed = random.randint(10, 20)  # Velocidad aleatoria
 
-        # Lógica para girar la ruleta
+        # Movimiento de la ruleta
         if spinning:
             current_angle += speed
-            speed *= 0.99  # Reducimos la velocidad gradualmente
-
-            if speed < 0.1:  # Detenerse cuando la velocidad es muy baja
+            speed *= 0.99  # Desaceleración suave
+            if speed < 0.1:
                 spinning = False
                 final_number = get_number_from_angle(current_angle)
 
+        # Dibujar el número que salió
         draw_number_wheel()
 
         pygame.display.flip()
         pygame.time.Clock().tick(60)
 
-    pygame.quit()
-
-if __name__ == "__main__":
-    main()
+# Ejecutar el juego
+main()
+pygame.quit()

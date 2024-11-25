@@ -252,10 +252,18 @@ COLORES = {
 # Configuración de jugadores y fichas
 VALORES_FICHAS = [5, 10, 20, 50, 100]
 JUGADORES = {
-    'Naranja': {'fichas': [2, 1, 1, 1, 0]},
+    'Naranja': {'fichas': [2, 2, 1, 0, 0]},
     'Lila': {'fichas': [2, 2, 1, 0, 0]},
-    'Azul': {'fichas': [2, 1, 2, 1, 0]},
+    'Azul': {'fichas': [2, 2, 1, 0, 0]},
 }
+
+def calcular_dinero(jugador):
+    fichas = JUGADORES[jugador]['fichas']
+    dinero = sum(fichas[i] * VALORES_FICHAS[i] for i in range(len(fichas)))
+    return dinero
+
+dinero_jugadores = {jugador: calcular_dinero(jugador) for jugador in JUGADORES}
+
 
 # Clase para las fichas
 class Ficha:
@@ -345,10 +353,12 @@ while running:
     draw_arrow()  # Dibuja la flecha
     draw_betting_table()  # Dibuja la mesa de apuestas
 
+
+
     # Lógica de giro de la ruleta
     if spinning:
         current_angle += speed
-        if current_angle >= target_angle:
+        if current_angle >= target_angle:   
             spinning = False
             current_angle = target_angle
         else:
