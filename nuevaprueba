@@ -340,11 +340,11 @@ def manejar_arrastre(fichas):
         tipo_apuesta, detalle_apuesta = detectar_apuesta(mouse_x, mouse_y)
         if tipo_apuesta is not None:
             manejar_apuestas(detalle_apuesta, ficha_arrastrada.jugador_nombre, ficha_arrastrada.valor, tipo_apuesta)
-            JUGADORES[ficha.arrastrada.jugador_nombre]['fichas'][VALORES_FICHAS.index(ficha.valor)] -= 1
+            JUGADORES[ficha_arrastrada.jugador_nombre]['fichas'][VALORES_FICHAS.index(ficha.valor)] -= 1  # CORREGIDO
         else:
             ficha_arrastrada.rect.topleft = posicion_inicial_ficha  # Ficha vuelve a su lugar si no hay apuesta válida
 
-        ficha_arrastrada = None
+    ficha_arrastrada = None
 
 
 
@@ -418,8 +418,10 @@ def mostrar_resultado(numero_ganador):
             numero_ganador = numbers[int(current_angle / (360 / len(numbers))) % len(numbers)]
             calcular_premios(numero_ganador)
             mostrar_resultado(numero_ganador)
+        else:
+            speed *= 0.99  # Reducir la velocidad poco a poco
     else:
-        speed *= 0.99
+        speed = 0  # Detener la ruleta completamente una vez que termina el giro
 
 # Bucle principal
 running = True
@@ -429,24 +431,29 @@ while running:
             running = False
         if event.type == pygame.MOUSEBUTTONDOWN:
             if not spinning:
+                # Si no está girando, iniciamos el giro de la ruleta
                 spinning = True
-                speed = random.randint(15, 25)
-                target_angle = random.randint(3600, 7200)
+                speed = random.randint(15, 25)  # Velocidad de giro aleatoria
+                target_angle = random.randint(3600, 7200)  # Cuántas vueltas dará la ruleta
 
     screen.fill(GREENB)  # Fondo verde de la mesa
     draw_roulette()  # Dibuja la ruleta
     draw_arrow()  # Dibuja la flecha
     draw_betting_table()  # Dibuja la mesa de apuestas
-    # Dibujar la ruleta y la mesa de apuestas
-    draw_roulette()
-    draw_arrow()
-    draw_betting_table()
-    dibujar_fichas(fichas, font)  # Dibujar las fichas
-    manejar_arrastre(fichas)  # Manejar el arrastre de las fichas
-    
-    pygame.display.flip()  # Actualizar la pantalla
+    dibujar_fichas(fichas, font)  # Dibuja las fichas
 
-    # Control de framerate
-    pygame.time.Clock().tick(60)
+    # Maneja el arrastre de fichas
+    manejar_arrastre(fichas)
 
-pygame.quit()
+    # Lógica de la ruleta y las apuestas
+    if spinning:
+        current_angle += speed
+        if current_angle >= target_angle:
+            spinning = False
+            current_angle = target_angle % 360  # Normaliza el ángulo
+            numero_ganador = numbers[int(current_angle / (360 / len(numbers)))]  # Obtiene el número ganador
+            calcular_premios(numero_ganador)  # Calcula los premios para los jugadores
+            mostrar_resultado(numero_ganador)  # Muestra el número ganador
+
+    pygame.display.update()  # Actualiza la pantalla
+    pygame.time.Clock().tick(60)  # Limita a 60 cuadros por segundo
