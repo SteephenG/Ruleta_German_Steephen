@@ -51,6 +51,10 @@ target_angle = 0
 speed = 0
 spinning = False
 
+
+# Número ganador
+winner_number = None
+
 # Datos de la mesa de apuestas
 bet_numbers = [
     [3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36],
@@ -402,30 +406,32 @@ while running:
                 spinning = True
                 speed = random.randint(15, 25)
                 target_angle = random.randint(3600, 7200)
+# Lógica de giro de la ruleta
+    if spinning:
+        current_angle += speed
+        if current_angle >= target_angle:
+            spinning = False
+            current_angle = target_angle % 360  # Normaliza el ángulo a [0, 360]
+
+            # Calcular el número ganador
+            angle_per_number = 360 / len(numbers)
+            winner_index = int((current_angle % 360) / angle_per_number)
+            winner_number = numbers[winner_index]
+            print(f"Número ganador: {winner_number}")
+        else:
+            speed *= 0.97
+
+    # Mostrar el texto del número ganador
+    if winner_number is not None:
+        text_winner = font.render(f"Número ganador: {winner_number}", True, WHITE)
+        screen.blit(text_winner, (width // 2 - text_winner.get_width() // 2, 100))
 
     screen.fill(GREENB)  # Fondo verde de la mesa
     draw_roulette()  # Dibuja la ruleta
     draw_arrow()  # Dibuja la flecha
-    draw_betting_table()  # Dibuja la mesa de apuestas
-
-
-
-    # Lógica de giro de la ruleta
-    if spinning:
-        current_angle += speed
-        if current_angle >= target_angle:   
-            spinning = False
-            current_angle = target_angle
-        else:
-            speed *= 0.99
-
-    # Dibujar la ruleta y la mesa de apuestas
-    draw_roulette()
-    draw_arrow()
-    draw_betting_table()
+    draw_betting_table()  # Dibuja la mesa de apuesta
     dibujar_fichas(fichas, font)  # Dibujar las fichas
     manejar_arrastre(fichas)  # Manejar el arrastre de las fichas
-    
     pygame.display.flip()  # Actualizar la pantalla
 
     # Control de framerate
